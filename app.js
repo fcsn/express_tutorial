@@ -2,6 +2,7 @@ var express = require('express');
 var bodyParser = require('body-parser');
 var fs = require('fs');
 var app = express();
+
 app.use(bodyParser.urlencoded({ extended:false }));
 app.locals.pretty = true;
 app.set('views', './views');
@@ -12,7 +13,13 @@ app.get('/topic/new', function(req, res) {
 app.post('/topic', function(req, res) {
   var title = req.body.title;
   var description = req.body.description;
-  res.send('HI post, '+req.body.title);
+  fs.writeFile('data/'+title, description, function(err) {
+    if(err) {
+      console.log(err);
+      res.status(500).send('Internal Server Error');
+    }
+    res.send('Success');
+  });
 })
 app.listen(3000, function() {
   console.log('Connected 3000 Port!');
